@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Local secrets and environment files
+.env
+.env.*
+!.env.example
+
+# Local model and tool caches
+.cache/
+cache/
+models/
+
+# Lecture media and generated pipeline data
+/*.mp3
+/*.m4a
+/*.wav
+/*.mp4
+/*.mkv
+/*.mov
+/*.avi
+/data/raw/*
+/data/clean/*
+/data/transcripts/*
+!/data/raw/.gitkeep
+!/data/clean/.gitkeep
+!/data/transcripts/.gitkeep
+
+# Local reference transcripts
+/reference*.txt
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
