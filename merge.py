@@ -19,20 +19,13 @@ def _speaker_for_segment(segment, speaker_turns):
     return best_turn["speaker"] if best_turn else "UNKNOWN"
 
 
-def _format_timestamp(seconds):
-    """Format seconds as a zero-padded hours, minutes, and seconds timestamp."""
-    total_seconds = max(0, int(seconds))
-    hours, remainder = divmod(total_seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
-
-
 def merge_transcript(segments, speaker_turns, text_path, json_path):
-    """Assign speakers to transcript segments and write readable text and JSON."""
+    """Assign speakers and write a paragraph transcript plus structured JSON."""
     merged = []
-    lines = []
+    text_chunks = []
     for segment in segments:
         speaker = _speaker_for_segment(segment, speaker_turns)
+        text = segment["text"].strip()
         record = {
             "start": segment["start"],
             "end": segment["end"],
@@ -40,14 +33,14 @@ def merge_transcript(segments, speaker_turns, text_path, json_path):
             "text": segment["text"],
         }
         merged.append(record)
-        timestamp = _format_timestamp(segment["start"])
-        lines.append(f"[{timestamp}] {speaker}: {segment['text']}")
+        if text:
+            text_chunks.append(text)
 
     text_path = Path(text_path)
     json_path = Path(json_path)
     text_path.parent.mkdir(parents=True, exist_ok=True)
     json_path.parent.mkdir(parents=True, exist_ok=True)
-    text_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    text_path.write_text(" ".join(text_chunks) + "\n", encoding="utf-8")
     with json_path.open("w", encoding="utf-8") as merged_file:
         json.dump(merged, merged_file, ensure_ascii=False, indent=2)
     return merged

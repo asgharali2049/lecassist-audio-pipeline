@@ -25,13 +25,19 @@ This Windows prototype converts audio or video to 16 kHz mono WAV, transcribes i
    ffmpeg -version
    ```
 
-3. Sign in to Hugging Face, accept the access conditions for [pyannote/speaker-diarization-3.1](https://huggingface.co/pyannote/speaker-diarization-3.1) and [pyannote/segmentation-3.0](https://huggingface.co/pyannote/segmentation-3.0), then create a read token. Set the token in the PowerShell window used to run the pipeline:
+3. Sign in to Hugging Face, accept the access conditions for [pyannote/speaker-diarization-3.1](https://huggingface.co/pyannote/speaker-diarization-3.1) and [pyannote/segmentation-3.0](https://huggingface.co/pyannote/segmentation-3.0), then create a read token. You can save the token in a `.env` file in the project root:
 
    ```powershell
-   $env:HF_TOKEN = "hf_your_token"
+   HF_TOKEN=your_token_here
    ```
 
-   This environment variable applies to the current PowerShell window. Creating a token on Hugging Face does not automatically make it available to Python. You can check that it is set without printing the secret:
+   Keep `.env` private; it is excluded from Git. The pipeline loads it automatically for diarization. Alternatively, set `HF_TOKEN` in the PowerShell session that runs the pipeline:
+
+   ```powershell
+   $env:HF_TOKEN = "your_token_here"
+   ```
+
+   Verify that Python can see a token without printing its value:
 
    ```powershell
    python -c "import os; print('HF_TOKEN available:', bool(os.getenv('HF_TOKEN')))"
@@ -80,6 +86,7 @@ If you do not have a reference file, omit `--reference`. If you provide a path t
 - `data/clean/<clip>_16k_mono_denoised.wav`: additional denoised audio, when `--denoise` is used.
 - `data/transcripts/<clip>_segments.json`: Whisper segments and timestamps.
 - `data/transcripts/<clip>_speaker_turns.json`: diarized speaker turns.
-- `data/transcripts/<clip>_transcript.txt` and `data/transcripts/<clip>_transcript.json`: merged transcript.
+- `data/transcripts/<clip>_transcript.txt`: all segment text joined into one paragraph.
+- `data/transcripts/<clip>_transcript.json`: merged transcript with timestamps and speaker labels.
 
 The first run downloads the Whisper and pyannote models; subsequent runs can use the local model cache. Loading and CPU inference may take several minutes, depending on the machine and clip length. Each run transcribes and diarizes the clip again.

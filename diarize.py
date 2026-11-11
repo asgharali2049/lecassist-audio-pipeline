@@ -9,10 +9,19 @@ def diarize_audio(audio_path, output_path=None):
     if not audio_path.is_file():
         raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
+    try:
+        from dotenv import load_dotenv
+    except ImportError as error:
+        raise RuntimeError(
+            "python-dotenv is required to load credentials from .env. "
+            "Install project requirements first."
+        ) from error
+
+    load_dotenv(Path(__file__).with_name(".env"))
     token = os.environ.get("HF_TOKEN")
     if not token:
         raise RuntimeError(
-            "HF_TOKEN is not set. Add your Hugging Face access token to the environment."
+            "HF_TOKEN is not set. Add it to the project .env file or the environment."
         )
 
     try:
